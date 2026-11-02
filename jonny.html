@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>LIVE Button</title>
+  <style>
+    .live-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #000;
+      color: white;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 1px;
+      padding: 10px 22px;
+      border-radius: 50px;          /* полностью полукруглые края */
+      border: none;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .live-dot {
+      width: 14px;
+      height: 14px;
+      background: #ff0000;
+      border-radius: 50%;
+      animation: blink 1.2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.15; }
+    }
+  </style>
+</head>
+<body style="display:flex; justify-content:center; align-items:center; height:100vh; margin:0;">
+
+  <div class="live-btn">
+    <span class="live-dot"></span>
+    LIVE
+  </div>
+
+</body>
+</html>

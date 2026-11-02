@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+  body { 
+    margin:0; 
+    background:transparent;
+    overflow:hidden;
+  }
+  canvas { display:block; }
+</style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 1000;
+    canvas.height = 1000;
+
+    let audioContext, analyser, dataArray;
+
+    async function start() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+        });
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioContext.createMediaStreamSource(stream);
+        analyser = audioContext.createAnalyser();
+        
+        analyser.fftSize = 2048;
+        analyser.smoothingTimeConstant = 0.7;
+
+        source.connect(analyser);
+        dataArray = new Uint8Array(analyser.fftSize);
+        console.log("✅ Микрофон подключён");
+        draw();
+      } catch(e) {
+        console.error("❌ Ошибка микрофона", e);
+        alert("Не удалось получить доступ к микрофону!");
+      }
+    }
+
+    function draw() {
+      requestAnimationFrame(draw);
+      if (!analyser) return;
+      analyser.getByteTimeDomainData(dataArray);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      
+      const baseRadius = 205;
+      const maxLength = 45;
+      const barCount = 150;
+      const lineWidth = 7.5;
+
+      // === ПРОЗРАЧНОСТЬ ===
+      const lineOpacity = 0.65;   // ← можно сделать ярче (0.9 - 1.0)
+
+      let sum = 0;
+      for (let i = 0; i < dataArray.length; i++) sum += Math.abs(dataArray[i] - 128);
+      const avg = sum / dataArray.length / 128;
+
+      for (let i = 0; i < barCount; i++) {
+        const angle = (i / barCount) * Math.PI * 2;
+        const sampleIndex = Math.floor((i / barCount) * (dataArray.length * 0.6));
+        let value = Math.abs(dataArray[sampleIndex] - 128) / 128;
+
+        let amp = value * 1.7 + avg * 3.8;
+        amp = Math.min(amp, 1.35);
+
+        const length = amp * maxLength;
+
+        const x1 = cx + Math.cos(angle) * baseRadius;
+        const y1 = cy + Math.sin(angle) * baseRadius;
+        const x2 = cx + Math.cos(angle) * (baseRadius + length);
+        const y2 = cy + Math.sin(angle) * (baseRadius + length);
+
+        // Только линия (без точек)
+        ctx.strokeStyle = `rgba(255, 255, 255, ${lineOpacity})`;
+        ctx.lineWidth = lineWidth;
+        ctx.lineCap = "round";
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+    }
+
+    start();
+  </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+body {
+  background: transparent !important;
+  box-sizing: border-box;
+}
+
+/* Общий glow */
+.controller.xbox {
+  filter: drop-shadow(0 0 25px rgba(255, 0, 0, 0.8));
+}
+
+/* Триггеры */
+.trigger {
+  background-color: #111 !important;
+  transition: all 0.2s ease-in-out;
+}
+.trigger.pressed {
+  background-color: #ff0000 !important;
+  box-shadow: 0 0 10px #ff0000;
+}
+
+/* Стики */
+.stick {
+  background-color: #111 !important;
+  border: 2px solid #ff0000 !important;
+  box-shadow: inset 0 0 5px #ff0000, 0 0 10px rgba(255, 0, 0, 0.3);
+  transition: all 0.2s ease-in-out;
+}
+.stick.pressed {
+  background-color: #ff0000 !important;
+}
+
+/* ABXY Кнопки */
+.button {
+  background-color: #111 !important;
+  border-radius: 50%;
+  transition: all 0.2s ease-in-out;
+}
+.button.pressed {
+  background-color: #ff0000 !important;
+  box-shadow: 0 0 8px #ff0000;
+  transform: scale(1.1);
+}
+
+/* Индивидуальные цвета кнопок */
+.button[data-button="a"] { border: 2px solid #00ff00; }
+.button[data-button="b"] { border: 2px solid #ff0000; }
+.button[data-button="x"] { border: 2px solid #00ccff; }
+.button[data-button="y"] { border: 2px solid #ffff00; }
+
+/* D-Pad */
+.dpad {
+  background-color: #111 !important;
+  transition: all 0.2s ease-in-out;
+}
+.dpad.pressed {
+  background-color: #ff0000 !important;
+  box-shadow: 0 0 8px #ff0000;
+}
+
+/* Start / Select */
+.start, .select {
+  background-color: #111 !important;
+  border: 1px solid #ff0000;
+  color: #ffcc00 !important;
+  transition: all 0.2s ease-in-out;
+}
+.start.pressed, .select.pressed {
+  background-color: #ff0000 !important;
+  color: #fff !important;
+}
+
+/* Убрать лишние элементы (если красный овал — это SVG или Canvas) */
+svg, canvas {
+  display: none !important;
+}

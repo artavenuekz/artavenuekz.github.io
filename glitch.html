@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+
+body{
+margin:0;
+background:transparent;
+overflow:hidden;
+}
+
+.glitch{
+position:absolute;
+width:100%;
+height:100%;
+pointer-events:none;
+}
+
+/* радиационная вспышка */
+
+.flash{
+position:absolute;
+width:100%;
+height:100%;
+background:radial-gradient(circle,
+rgba(120,255,120,0.15) 0%,
+rgba(120,255,120,0.05) 40%,
+transparent 70%);
+opacity:0;
+}
+
+/* скан линии */
+
+.scan{
+position:absolute;
+width:100%;
+height:3px;
+background:rgba(120,255,120,0.35);
+top:0;
+opacity:0;
+filter:blur(1px);
+}
+
+/* помехи */
+
+.noise{
+position:absolute;
+width:100%;
+height:100%;
+background-image:
+radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+background-size:3px 3px;
+opacity:0;
+mix-blend-mode:screen;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="glitch">
+
+<div class="flash" id="flash"></div>
+<div class="scan" id="scan"></div>
+<div class="noise" id="noise"></div>
+
+</div>
+
+<script>
+
+const flash = document.getElementById("flash")
+const scan = document.getElementById("scan")
+const noise = document.getElementById("noise")
+
+function radiationGlitch(){
+
+flash.style.opacity = "1"
+noise.style.opacity = "0.3"
+
+setTimeout(()=>{
+flash.style.opacity = "0"
+noise.style.opacity = "0"
+},120)
+
+scan.style.opacity = "0.6"
+scan.style.top = Math.random()*100+"%"
+
+setTimeout(()=>{
+scan.style.opacity = "0"
+},150)
+
+}
+
+setInterval(()=>{
+if(Math.random() < 0.35){
+radiationGlitch()
+}
+},2000)
+
+</script>
+
+</body>
+</html>

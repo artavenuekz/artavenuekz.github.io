@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pulsoid Test</title>
+</head>
+<body style="background: black; color: white; font-family: monospace;">
+  <h2>Pulsoid API Test</h2>
+  <pre id="output">Loading...</pre>
+
+  <script>
+    const TOKEN = "5c69b125-d00d-4a55-8b21-19f8bbd4e220"; // вставь свой токен сюда
+
+    async function fetchPulse() {
+      try {
+        const res = await fetch("https://dev.pulsoid.net/api/v1/data/heart_rate", {
+          headers: { Authorization: "Bearer " + TOKEN }
+        });
+        const data = await res.json();
+        document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+      } catch (e) {
+        document.getElementById("output").innerText = "Error: " + e;
+      }
+    }
+
+    fetchPulse();
+    setInterval(fetchPulse, 3000);
+  </script>
+</body>
+</html>

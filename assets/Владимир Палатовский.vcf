@@ -1,0 +1,22 @@
+BEGIN:VCARD
+VERSION:3.0
+FN:Владимир Фотограф Палатовский
+N:Палатовский;Владимир Фотограф;;;
+item1.EMAIL;TYPE=INTERNET:mail@artavenue.kz
+item1.X-ABLabel:
+item2.TEL:+7 707 160 8950
+item2.X-ABLabel:
+item3.ORG:ArtAvenue
+item3.X-ABLabel:
+item4.TITLE:Фотограф\, руководитель компании
+item4.X-ABLabel:
+item5.URL:https\://wa.me/77071608950
+item5.X-ABLabel:
+item6.URL:https\://t.me/77071608950
+item6.X-ABLabel:
+item7.URL:https\://artavenue.kz
+item7.X-ABLabel:
+PHOTO:https://lh3.googleusercontent.com/contacts/ADlvnhKtRBQtTOT3iaZ0HlwgnZ
+ mfy4VSNL2EMDU0WpMYiN2WOR1BB1yG
+CATEGORIES:myContacts
+END:VCARD

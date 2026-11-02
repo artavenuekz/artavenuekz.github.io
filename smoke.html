@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Particles</title>
+<style>
+    body {
+        margin: 0;
+        background: transparent;
+        overflow: hidden;
+    }
+    canvas {
+        display: block;
+    }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d', { alpha: true });
+
+const WIDTH = 1280;
+const HEIGHT = 720;
+canvas.width = WIDTH;
+canvas.height = HEIGHT;
+
+const COUNT = 42;
+
+const particles = [];
+
+for (let i = 0; i < COUNT; i++) {
+    particles.push({
+        x: Math.random() * WIDTH,
+        y: Math.random() * HEIGHT,
+        size: Math.random() * 5.5 + 3.8,
+        vx: (Math.random() - 0.5) * 0.45,           // боковое движение тоже тише
+        vy: -(Math.random() * 0.45 + 0.22),        // ← в 2 раза медленнее
+        alpha: Math.random() * 0.42 + 0.25,
+        swaySpeed: Math.random() * 0.009 + 0.005,
+        phase: Math.random() * Math.PI * 2
+    });
+}
+
+function loop() {
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+    for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        p.phase += p.swaySpeed;
+        const sway = Math.sin(p.phase) * 1.2;
+
+        p.x += p.vx + sway;
+        p.y += p.vy;
+
+        if (p.y < -40) {
+            p.y = HEIGHT + 60;
+            p.x = Math.random() * WIDTH;
+        }
+
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    requestAnimationFrame(loop);
+}
+
+loop();
+</script>
+</body>
+</html>

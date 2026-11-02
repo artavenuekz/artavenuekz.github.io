@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>STALKER Radiation HUD</title>
+
+<style>
+  :root{
+    --green:#9cff8f;
+    --yellow:#ffd966;
+    --red:#ff5c5c;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: "Courier New", Consolas, monospace;
+  }
+
+  .wrap {
+    position: relative;
+    display: inline-block;
+    background: transparent;
+    padding: 8px 12px;
+  }
+
+  .hud {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1;
+    user-select: none;
+    white-space: nowrap;
+    background: transparent;
+  }
+
+  .icon {
+    display: inline-block;
+    font-size: 28px;
+    transform-origin: center;
+    animation: iconPulse 2.4s ease-in-out infinite;
+  }
+
+  .text-wrap {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 14px;
+    position: relative;
+  }
+
+  .label,
+  .msv {
+    position: relative;
+    display: inline-block;
+    animation: flicker 3.8s infinite;
+  }
+
+  .value {
+    display: inline-block;
+    min-width: 310px;
+  }
+
+  .msv {
+    min-width: 105px;
+    text-align: right;
+    opacity: 0.95;
+  }
+
+  .low .icon,
+  .low .label,
+  .low .msv {
+    color: var(--green);
+    text-shadow:
+      0 0 4px rgba(156,255,143,0.85),
+      0 0 10px rgba(156,255,143,0.35);
+  }
+
+  .high .icon,
+  .high .label,
+  .high .msv {
+    color: var(--yellow);
+    text-shadow:
+      0 0 5px rgba(255,217,102,0.85),
+      0 0 12px rgba(255,217,102,0.4);
+  }
+
+  .strong .icon,
+  .strong .label,
+  .strong .msv {
+    color: var(--red);
+    text-shadow:
+      0 0 6px rgba(255,92,92,0.95),
+      0 0 16px rgba(255,92,92,0.55);
+  }
+
+  .strong .label,
+  .strong .msv {
+    animation: dangerBlink 0.85s infinite;
+  }
+
+  .glitch {
+    position: relative;
+    display: inline-block;
+  }
+
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .glitch.active::before {
+    opacity: 0.75;
+    transform: translate(-2px, 0);
+    clip-path: inset(0 0 45% 0);
+  }
+
+  .glitch.active::after {
+    opacity: 0.6;
+    transform: translate(2px, 0);
+    clip-path: inset(48% 0 0 0);
+  }
+
+  .low .glitch.active::before,
+  .low .glitch.active::after {
+    color: rgba(156,255,143,0.95);
+  }
+
+  .high .glitch.active::before,
+  .high .glitch.active::after {
+    color: rgba(255,217,102,0.95);
+  }
+
+  .strong .glitch.active::before,
+  .strong .glitch.active::after {
+    color: rgba(255,92,92,0.95);
+  }
+
+  .scanlines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.12;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.12) 0px,
+        rgba(255,255,255,0.12) 1px,
+        transparent 2px,
+        transparent 4px
+      );
+    mix-blend-mode: screen;
+    animation: scanMove 7s linear infinite;
+  }
+
+  .noise {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.06;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,0.35) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 70% 60%, rgba(255,255,255,0.25) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 40% 80%, rgba(255,255,255,0.2) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 85% 20%, rgba(255,255,255,0.25) 0 1px, transparent 1.5px);
+    animation: noiseFlicker 0.35s steps(2) infinite;
+  }
+
+  .sweep {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,255,255,0.08) 45%,
+      rgba(255,255,255,0.16) 50%,
+      rgba(255,255,255,0.08) 55%,
+      transparent 100%
+    );
+    animation: sweep 9s linear infinite;
+  }
+
+  @keyframes iconPulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.9;
+    }
+    50% {
+      transform: scale(1.12);
+      opacity: 1;
+    }
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 0.96; }
+    8% { opacity: 0.84; }
+    10% { opacity: 0.98; }
+    55% { opacity: 0.9; }
+    57% { opacity: 0.74; }
+    60% { opacity: 0.96; }
+  }
+
+  @keyframes dangerBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+  }
+
+  @keyframes noiseFlicker {
+    0% { transform: translate(0,0); opacity: 0.04; }
+    50% { transform: translate(1px,-1px); opacity: 0.07; }
+    100% { transform: translate(-1px,1px); opacity: 0.05; }
+  }
+
+  @keyframes scanMove {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(4px); }
+  }
+
+  @keyframes sweep {
+    0% {
+      transform: translateX(-120%);
+      opacity: 0;
+    }
+    8% {
+      opacity: 0.18;
+    }
+    14% {
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(140%);
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="wrap">
+    <div id="hud" class="hud low">
+      <span class="icon">☢</span>
+
+      <span class="text-wrap">
+        <span class="label glitch" id="statusText" data-text="РАДИАЦИЯ: НИЗКАЯ">
+          <span class="value">РАДИАЦИЯ: НИЗКАЯ</span>
+        </span>
+
+        <span class="msv glitch" id="msvText" data-text="0.3 mSv">0.3 mSv</span>
+      </span>
+    </div>
+
+    <div class="scanlines"></div>
+    <div class="noise"></div>
+    <div class="sweep"></div>
+  </div>
+
+<script>
+  const hud = document.getElementById("hud");
+  const statusText = document.getElementById("statusText");
+  const msvText = document.getElementById("msvText");
+
+  const states = [
+    {
+      className: "low",
+      text: "РАДИАЦИЯ: НИЗКАЯ",
+      msv: "0.3 mSv"
+    },
+    {
+      className: "high",
+      text: "РАДИАЦИЯ: ВЫСОКАЯ",
+      msv: "1.2 mSv"
+    },
+    {
+      className: "strong",
+      text: "РАДИАЦИЯ: СИЛЬНАЯ",
+      msv: "2.4 mSv"
+    }
+  ];
+
+  let index = 0;
+
+  function applyState(state) {
+    hud.className = "hud " + state.className;
+
+    statusText.dataset.text = state.text;
+    msvText.dataset.text = state.msv;
+
+    statusText.innerHTML = '<span class="value">' + state.text + '</span>';
+    msvText.textContent = state.msv;
+  }
+
+  function nextState() {
+    index = (index + 1) % states.length;
+    applyState(states[index]);
+  }
+
+  function triggerGlitch() {
+    const targets = [statusText, msvText];
+    targets.forEach(el => el.classList.remove("active"));
+
+    if (Math.random() < 0.38) {
+      const target = targets[Math.floor(Math.random() * targets.length)];
+      target.classList.add("active");
+
+      const duration = 90 + Math.floor(Math.random() * 170);
+
+      setTimeout(() => {
+        target.classList.remove("active");
+      }, duration);
+    }
+  }
+
+  applyState(states[index]);
+
+  setInterval(nextState, 10000);
+  setInterval(triggerGlitch, 2200);
+</script>
+
+</body>
+</html>

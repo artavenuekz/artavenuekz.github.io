@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Likes</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .like {
+      position: absolute;
+      bottom: -60px;
+      pointer-events: none;
+      animation: floatUp linear forwards;
+      z-index: 5;
+      opacity: 0;
+      user-select: none;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(0.5) rotate(0deg);
+        opacity: 0;
+      }
+      8% {
+        opacity: 1;
+      }
+      70% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-110vh) scale(1.1) rotate(var(--rot));
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const emojis = ['❤️', '👍', '🔥', '💯', '❤️‍🔥', '♥️', '💗'];
+
+    function createLike() {
+      const like = document.createElement('div');
+      like.className = 'like';
+      like.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+      // Случайная позиция
+      like.style.left = (Math.random() * 92 + 4) + '%';
+
+      // Случайный размер
+      const size = 20 + Math.random() * 28;
+      like.style.fontSize = size + 'px';
+
+      // Случайная длительность (3.5 – 7 сек)
+      const duration = 3.5 + Math.random() * 3.5;
+      like.style.animationDuration = duration + 's';
+
+      // Случайный поворот
+      const rot = (Math.random() * 40 - 20) + 'deg';
+      like.style.setProperty('--rot', rot);
+
+      document.body.appendChild(like);
+
+      setTimeout(() => like.remove(), duration * 1000 + 100);
+    }
+
+    // Бесконечно создаём лайки с разной частотой
+    setInterval(createLike, 280);
+    setInterval(createLike, 450);
+    setInterval(createLike, 620);
+    setInterval(createLike, 900);
+  </script>
+</body>
+</html>
